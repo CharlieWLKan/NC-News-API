@@ -34,7 +34,59 @@ describe('GET /api/topics', () => {
       .get('/api/topics')
       .expect(200)
       .then(({ body }) => {
+        //Check that body contains a 'topics' key
         expect(body).toHaveProperty('topics')
+        expect(Array.isArray(body.topics)).toBe(true)
+        //Check that each topic has 'slug' and 'description' properties
+        body.topics.forEach((topic)=>{
+          expect(topic).toEqual(
+            expect.objectContaining({
+              slug: expect.any(String),
+              description: expect.any(String)
+            })
+          )
+        })
       })
   })
 })
+
+describe('GET /api/articles/:article_id', () => {
+  test('200: Responds with an article object with the correct properties', () => {
+    return request(app)
+      .get('/api/articles/1') // Replace 1 with a valid article_id from test data
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toEqual(
+          expect.objectContaining({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: 1, // Ensure it matches the requested article_id
+            body: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String)
+          })
+        );
+      });
+  });
+
+  test('404: Responds with "Article not found" when article_id does not exist', () => {
+    return request(app)
+      .get('/api/articles/9999') // Non-existent article_id
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Article not found');
+      });
+  });
+
+  test('400: Responds with "Invalid article ID" for invalid article_id format', () => {
+    return request(app)
+      .get('/api/articles/not-a-number')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid article ID');
+      });
+  });
+});
