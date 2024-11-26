@@ -7,6 +7,7 @@
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
+    "start": "nodemon ./db/listen.js",
     "prepare": "husky install"
   },
   "repository": {
@@ -28,7 +29,10 @@
   },
   "dependencies": {
     "dotenv": "^16.0.0",
-    "pg": "^8.7.3"
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7",
+    "pg": "^8.7.3",
+    "supertest": "^7.0.0"
   },
   "jest": {
     "setupFilesAfterEnv": [
