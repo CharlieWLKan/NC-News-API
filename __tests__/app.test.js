@@ -77,7 +77,7 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/9999') // Non-existent article_id
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Article not found');
+        expect(body.msg).toBe('Article not found')
       });
   });
 
@@ -86,7 +86,43 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/not-a-number')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid article ID');
+        expect(body.msg).toBe('Invalid article ID')
+      });
+  });
+});
+
+describe("GET /api/articles", () => {
+  test("200: Responds with an array of article objects with the correct properties", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body
+        expect(Array.isArray(articles)).toBe(true)
+        expect(articles.length).toBeGreaterThan(0)
+
+        articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+              comment_count: expect.any(String) // comment_count is a string because it's a count result from SQL
+            })
+          );
+
+          // Ensure the 'body' property is not included
+          expect(article.body).toBeUndefined()
+        });
+
+        // Check if articles are sorted by date in descending order
+        expect(new Date(articles[0].created_at).getTime()).toBeGreaterThanOrEqual(
+          new Date(articles[articles.length - 1].created_at).getTime()
+        );
       });
   });
 });
