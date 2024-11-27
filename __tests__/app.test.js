@@ -289,3 +289,31 @@ test('should return an article by its id', () => {
       expect(body.article).toHaveProperty('article_id', 1)
     })
 })
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("should delete a comment by comment_id", () => {
+    const commentId = 1;
+
+    return request(app)
+      .delete(`/api/comments/${commentId}`)
+      .expect(204); // No content returned
+  });
+
+  test("should return 404 if the comment is not found", () => {
+    return request(app)
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Comment not found");
+      })
+  })
+
+  test("should return 400 if the comment_id is invalid", () => {
+    return request(app)
+      .delete("/api/comments/invalid_id")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input")
+      })
+  })
+})
