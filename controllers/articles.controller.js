@@ -1,18 +1,36 @@
-const {selectAllArticles, selectArticleById } = require("../models/articles.model")
+const { selectArticleById, updateArticleVotes, selectAllArticles } = require("../models/articles.model");
 
 const getArticleById = (req, res, next) => {
-  const { article_id } = req.params
+  const { article_id } = req.params;
 
-  selectArticleById(article_id).then((article) => {
-    res.status(200).send({article})
-  }).catch((err) => {
-    if(err.status) {
-      res.status(err.status).send({msg: err.msg})
-    } else {
-      next(err)
-    }
-  })
-}
+  selectArticleById(article_id)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      if (err.status) {
+        res.status(err.status).send({ msg: err.msg });
+      } else {
+        next(err);
+      }
+    });
+};
+
+const patchArticleVotes = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+
+  if (typeof inc_votes !== 'number') {
+    return res.status(400).send({ msg: "inc_votes must be a number" });
+  }
+
+  updateArticleVotes(article_id, inc_votes)
+    .then((updatedArticle) => {
+      res.status(200).send({ article: updatedArticle });
+    })
+    .catch(next)
+};
 
 const getArticles = (req, res, next) => {
   selectAllArticles()
@@ -22,6 +40,6 @@ const getArticles = (req, res, next) => {
     .catch((err) => {
       next(err)
     })
-}
+};
 
-module.exports = {getArticleById, getArticles}
+module.exports = { getArticleById, patchArticleVotes, getArticles };

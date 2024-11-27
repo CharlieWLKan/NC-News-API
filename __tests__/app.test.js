@@ -279,3 +279,13 @@ test("400: Responds with an error when the request body is missing required fiel
       expect(body.msg).toBe("Username and body are required");
     });
 });
+
+test('should return an article by its id', () => {
+  return request(app)
+    .get('/api/articles/1')
+    .expect(200)
+    .then(({ body }) => {
+      expect(body).toHaveProperty('article')
+      expect(body.article).toHaveProperty('article_id', 1)
+    })
+})
