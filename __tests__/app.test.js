@@ -223,3 +223,59 @@ describe("GET /api/articles/:article_id/comments", () => {
       })
   })
 })
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: Responds with the newly posted comment", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "This is a test comment"
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: newComment.username,
+            body: newComment.body,
+            article_id: 1,
+          })
+        );
+      });
+  })
+})
+
+test("400: Responds with an error when the article_id is not valid", () => {
+  const newComment = {
+    username: "butter_bridge",
+    body: "This is a test comment"
+  };
+
+  return request(app)
+    .post("/api/articles/not-a-number/comments")
+    .send(newComment)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Invalid article ID");
+    });
+});
+
+test("400: Responds with an error when the request body is missing required fields", () => {
+  const incompleteComment = {
+    body: "This comment has no username"
+  };
+
+  return request(app)
+    .post("/api/articles/1/comments")
+    .send(incompleteComment)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Username and body are required");
+    });
+});

@@ -9,6 +9,12 @@ const selectArticleById = (article_id) => {
         }
       return rows[0]
     })
+    .catch((err) => {
+      if (err.code === "22P02") {
+        return Promise.reject({ status: 400, msg: "Invalid article ID" })
+      }
+      throw err
+    });
   }
 
 const selectAllArticles = () => {
@@ -30,8 +36,12 @@ const selectAllArticles = () => {
       )
       .then(({ rows }) => {
         return rows;
-      });
-  };
+      })
+      .catch((err) => {
+        console.error("Unexpected error in selectAllArticles:", err);
+        throw err;
+      })
+  }
   
 
 module.exports = {selectAllArticles, selectArticleById}
