@@ -1,4 +1,4 @@
-const { selectCommentsByArticleId } = require("../models/comments.model")
+const { selectCommentsByArticleId, insertComment } = require("../models/comments.model")
 
 const getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params
@@ -18,4 +18,23 @@ const getCommentsByArticleId = (req, res, next) => {
     .catch(next)
 }
 
-module.exports = { getCommentsByArticleId }
+const postCommentByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+
+  // Error handling for invalid data
+  if (isNaN(article_id)) {
+    return res.status(400).send({ msg: "Invalid article ID" })
+  }
+  if (!username || !body) {
+    return res.status(400).send({ msg: "Username and body are required" });
+  }
+
+  insertComment(article_id, username, body)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch(next);
+}
+
+module.exports = { getCommentsByArticleId, postCommentByArticleId }
