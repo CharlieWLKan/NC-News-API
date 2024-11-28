@@ -111,7 +111,7 @@ describe("GET /api/articles", () => {
               created_at: expect.any(String),
               votes: expect.any(Number),
               article_img_url: expect.any(String),
-              comment_count: expect.any(String) 
+              comment_count: expect.any(Number) 
             })
           );
 
@@ -325,6 +325,30 @@ test("404: responds with error for non-existent article_id", () => {
       expect(body.msg).toBe("Article not found");
     });
 });
+
+test("200: sorts articles by created_at in descending order by default", () => {
+  return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({ body }) => {
+      const articles = body.articles
+      for (let i = 1; i < articles.length; i++) {
+        const prevDate = new Date(articles[i - 1].created_at).getTime()
+        const currDate = new Date(articles[i].created_at).getTime()
+        expect(prevDate).toBeGreaterThanOrEqual(currDate)
+      }
+    })
+})
+
+test("400: responds with an error when provided an invalid order query", () => {
+  return request(app)
+    .get("/api/articles?order=invalid")
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Invalid order query");
+    });
+});
+
 
 describe("DELETE /api/comments/:comment_id", () => {
   test("should delete a comment by comment_id", () => {
