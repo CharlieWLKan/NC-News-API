@@ -42,6 +42,18 @@ const selectAllArticles = () => {
         throw err;
       })
   }
-  
 
-module.exports = {selectAllArticles, selectArticleById}
+  const updateArticleVotes = (article_id, inc_votes) => {
+    const queryStr = `
+      UPDATE articles
+      SET votes = votes + $1
+      WHERE article_id = $2
+      RETURNING *;
+    `;
+  
+    return db.query(queryStr, [inc_votes, article_id]).then(({ rows }) => {
+      return rows[0]
+    })
+  }
+
+module.exports = {selectAllArticles, selectArticleById, updateArticleVotes}

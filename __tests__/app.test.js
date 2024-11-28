@@ -290,6 +290,42 @@ test('should return an article by its id', () => {
     })
 })
 
+test("200: increments the votes property by the given amount", () => {
+  return request(app)
+    .patch("/api/articles/1")
+    .send({ inc_votes: 1 })
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.article).toEqual(
+        expect.objectContaining({
+          article_id: 1,
+          votes: expect.any(Number),
+        })
+      );
+      expect(body.article.votes).toBeGreaterThan(0);
+    });
+});
+
+test("400: responds with error for invalid article_id", () => {
+  return request(app)
+    .patch("/api/articles/not_a_number")
+    .send({ inc_votes: 1 })
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Invalid input");
+    });
+});
+
+test("404: responds with error for non-existent article_id", () => {
+  return request(app)
+    .patch("/api/articles/9999")
+    .send({ inc_votes: 1 })
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Article not found");
+    });
+});
+
 describe("DELETE /api/comments/:comment_id", () => {
   test("should delete a comment by comment_id", () => {
     const commentId = 1;
