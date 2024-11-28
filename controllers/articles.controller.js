@@ -36,13 +36,12 @@ const updateArticleById = (req, res, next) => {
 };
 
 const getArticles = (req, res, next) => {
-  selectAllArticles()
+  const { sort_by, order } = req.query;
+  selectAllArticles(sort_by, order)
     .then((articles) => {
       res.status(200).send({ articles })
     })
-    .catch((err) => {
-      next(err)
-    })
-};
+    .catch(next)
+    }
 
 module.exports = { getArticleById, getArticles, updateArticleById };
