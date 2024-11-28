@@ -16,7 +16,7 @@ const getArticleById = (req, res, next) => {
     });
 };
 
-const patchArticleVotes = (req, res, next) => {
+const updateArticleById = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
 
@@ -27,6 +27,9 @@ const patchArticleVotes = (req, res, next) => {
 
   updateArticleVotes(article_id, inc_votes)
     .then((updatedArticle) => {
+      if (!updatedArticle) {
+        return res.status(404).send({ msg: "Article not found" });
+      }
       res.status(200).send({ article: updatedArticle });
     })
     .catch(next)
@@ -42,4 +45,4 @@ const getArticles = (req, res, next) => {
     })
 };
 
-module.exports = { getArticleById, patchArticleVotes, getArticles };
+module.exports = { getArticleById, getArticles, updateArticleById };

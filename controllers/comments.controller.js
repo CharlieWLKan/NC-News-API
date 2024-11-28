@@ -1,5 +1,6 @@
 const { selectCommentsByArticleId, insertComment, deleteCommentById } = require("../models/comments.model")
 
+
 const getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params
 
@@ -44,7 +45,6 @@ const deleteComment = (req, res, next) => {
     res.status(204).send()
   })
   .catch((err) => {
-    console.log(err)
       next(err)
   })
 }

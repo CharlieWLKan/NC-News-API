@@ -4,9 +4,10 @@ app.use(express.json())
 
 const getApi = require("./controllers/api.controller")
 const {getTopics} = require("./controllers/topics.controller")
-const {getArticleById, getArticles} = require("./controllers/articles.controller")
+const {getArticleById, getArticles, updateArticleVotes} = require("./controllers/articles.controller")
 const { getCommentsByArticleId, postCommentByArticleId, deleteComment } = require("./controllers/comments.controller")
 const { getUsers } = require("./controllers/users.controller")
+const { updateArticleById } = require("./controllers/articles.controller")
 
 app.get("/api", getApi)
 app.get("/api/topics", getTopics)
@@ -16,6 +17,7 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId)
 app.post("/api/articles/:article_id/comments", postCommentByArticleId),
 app.delete("/api/comments/:comment_id", deleteComment)
 app.get("/api/users", getUsers)
+app.patch("/api/articles/:article_id", updateArticleById)
 
 //middleware error handling, not sure if needed yet...
 app.use((err, req, res, next) => {
