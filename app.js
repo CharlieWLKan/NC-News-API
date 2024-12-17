@@ -10,6 +10,7 @@ const { getCommentsByArticleId, postCommentByArticleId, deleteComment } = requir
 const { getUsers } = require("./controllers/users.controller")
 const { updateArticleById } = require("./controllers/articles.controller")
 
+app.use(cors())
 app.get("/api", getApi)
 app.get("/api/topics", getTopics)
 app.get("/api/articles/:article_id", getArticleById)
@@ -19,7 +20,7 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId),
 app.delete("/api/comments/:comment_id", deleteComment)
 app.get("/api/users", getUsers)
 app.patch("/api/articles/:article_id", updateArticleById)
-app.use(cors())
+
 
 //middleware error handling, not sure if needed yet...
 app.use((err, req, res, next) => {
