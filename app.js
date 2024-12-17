@@ -1,6 +1,7 @@
 const express = require("express")
 const app = express()
 app.use(express.json())
+const cors = require('cors')
 
 const getApi = require("./controllers/api.controller")
 const {getTopics} = require("./controllers/topics.controller")
@@ -18,6 +19,7 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId),
 app.delete("/api/comments/:comment_id", deleteComment)
 app.get("/api/users", getUsers)
 app.patch("/api/articles/:article_id", updateArticleById)
+app.use(cors())
 
 //middleware error handling, not sure if needed yet...
 app.use((err, req, res, next) => {
